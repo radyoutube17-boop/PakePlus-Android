@@ -1,0 +1,2954 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>برنامه‌ریز هوشمند | نکسا</title>
+    <!-- فونت وزیرمتن -->
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    <!-- آیکون‌ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transition: background-color 0.25s ease, color 0.2s ease, border-color 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --surface-2: #f1f5f9;
+            --text: #0f172a;
+            --text-secondary: #475569;
+            --border: #e2e8f0;
+            --primary: #6d5dfc;
+            --primary-soft: #ede9fe;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.04), 0 2px 6px rgba(0, 0, 0, 0.02);
+            --shadow-lg: 0 20px 35px -8px rgba(0, 0, 0, 0.12);
+            --radius: 24px;
+            --radius-sm: 14px;
+            --radius-xs: 10px;
+        }
+
+        body.dark {
+            --bg: #0b0f19;
+            --surface: #151e2c;
+            --surface-2: #1e2a3a;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #26344a;
+            --primary: #8b7aff;
+            --primary-soft: #2a2440;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 35px -8px rgba(0, 0, 0, 0.6);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            padding: 0;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* اپ اصلی */
+        .app-container {
+            width: 100%;
+            height: 100vh;
+            height: 100dvh;
+            background-color: var(--surface);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        /* هدر */
+        .app-header {
+            padding: 20px 22px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .app-header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .theme-toggle {
+            background: var(--surface-2);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+            font-size: 1.4rem;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.92);
+        }
+
+        /* آمار بالای صفحه */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 14px 18px;
+            margin: 8px 16px 0;
+            background: var(--surface-2);
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            opacity: 0.9;
+        }
+
+        /* لیست کارها */
+        .tasks-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 16px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .tasks-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .tasks-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .tasks-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        /* کارت تسک */
+        .task-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            animation: fadeSlide 0.25s ease;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .task-card.completed {
+            opacity: 0.7;
+            background: var(--surface-2);
+        }
+
+        .task-card.completed .task-title {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .task-check {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            cursor: pointer;
+            color: white;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+            transition: all 0.15s;
+        }
+
+        .task-card.completed .task-check {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .task-title-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            font-size: 1rem;
+            word-break: break-word;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .subtask-toggle {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 30px;
+            padding: 4px 9px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-family: inherit;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .subtask-toggle:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .subtask-toggle:focus-visible,
+        .subtask-item:focus-visible {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .subtask-toggle i {
+            font-size: 0.65rem;
+            transition: transform 0.2s ease;
+        }
+
+        .subtask-toggle[aria-expanded="true"] i {
+            transform: rotate(180deg);
+        }
+
+        .subtask-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 7px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-right: 3px solid var(--primary);
+            border-radius: 14px;
+            background: var(--surface-2);
+            animation: subtask-list-in 0.2s ease-out;
+        }
+
+        @keyframes subtask-list-in {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .subtask-list-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 0 2px 2px;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .subtask-progress {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .subtask-progress-track {
+            width: 52px;
+            height: 5px;
+            overflow: hidden;
+            border-radius: 10px;
+            background: var(--border);
+        }
+
+        .subtask-progress-fill {
+            display: block;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--success);
+            transition: width 0.25s ease;
+        }
+
+        .subtask-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 42px;
+            padding: 9px 10px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--surface);
+            color: var(--text);
+            text-align: right;
+            font-family: inherit;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(15, 23, 42, 0.03);
+            transition: border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease, transform 0.15s ease;
+        }
+
+        .subtask-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .subtask-item:active {
+            transform: scale(0.99);
+        }
+
+        .subtask-item.completed {
+            color: var(--text-secondary);
+            background: color-mix(in srgb, var(--success) 7%, var(--surface));
+            border-color: color-mix(in srgb, var(--success) 24%, var(--border));
+        }
+
+        .subtask-item.completed .subtask-title {
+            text-decoration: line-through;
+        }
+
+        .subtask-check {
+            width: 19px;
+            height: 19px;
+            flex: 0 0 20px;
+            display: grid;
+            place-items: center;
+            margin-top: 0;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            color: #fff;
+            font-size: 0.62rem;
+            background: var(--surface);
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .subtask-item.completed .subtask-check {
+            border-color: var(--success);
+            background: var(--success);
+            transform: scale(1.05);
+        }
+
+        .subtask-title {
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .subtask-item.completed .subtask-title {
+            text-decoration-color: var(--success);
+            text-decoration-thickness: 1px;
+        }
+
+        .task-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .task-meta i {
+            margin-left: 4px;
+            font-size: 0.7rem;
+            color: var(--primary);
+        }
+
+        .task-priority {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .task-priority.high {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .dark .task-priority.high {
+            background: #4a1a1a;
+            color: #fca5a5;
+        }
+
+        .task-priority.medium {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .dark .task-priority.medium {
+            background: #4a3a1a;
+            color: #fcd34d;
+        }
+
+        .task-priority.low {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .dark .task-priority.low {
+            background: #1a2a4a;
+            color: #93c5fd;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .icon-btn:hover {
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .icon-btn.delete:hover {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        .dark .icon-btn.delete:hover {
+            background: #4a1a1a;
+        }
+
+        /* دکمه شناور */
+        .fab {
+            position: absolute;
+            bottom: 80px;
+            left: 24px;
+            width: 62px;
+            height: 62px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--primary), #8b7aff);
+            color: white;
+            border: none;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 28px rgba(109, 93, 252, 0.4);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            z-index: 10;
+        }
+
+        .fab:active {
+            transform: scale(0.92) rotate(90deg);
+        }
+
+        /* نوار پایین */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 16px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            font-size: 0.7rem;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 40px;
+            transition: all 0.2s;
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: var(--primary-soft);
+        }
+
+        /* مودال افزودن/ویرایش */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 34px;
+            width: 100%;
+            max-width: 400px;
+            max-height: calc(100vh - 40px);
+            max-height: calc(100dvh - 40px);
+            overflow-y: auto;
+            padding: 26px 22px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            transform: scale(0.94);
+            transition: all 0.25s ease;
+        }
+
+        .modal-overlay.show .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .input-group input, .input-group select, .input-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 18px;
+            border: 1.5px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus {
+            border-color: var(--primary);
+            background: var(--surface);
+            box-shadow: 0 0 0 4px rgba(109, 93, 252, 0.15);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .subtask-editor {
+            margin-bottom: 18px;
+        }
+
+        .subtask-editor-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .subtask-editor-heading label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .subtask-editor-help {
+            display: block;
+            margin-bottom: 9px;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            line-height: 1.5;
+        }
+
+        .subtask-add-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .subtask-add-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 11px 12px;
+            border-radius: 14px;
+            border: 1.5px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            font-size: 0.85rem;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .subtask-add-row input:focus {
+            border-color: var(--primary);
+        }
+
+        .subtask-add-btn {
+            flex: 0 0 auto;
+            padding: 0 13px;
+            border: 0;
+            border-radius: 14px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .subtask-editor-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-top: 9px;
+        }
+
+        .subtask-editor-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subtask-editor-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 12px;
+            border-radius: 13px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            color: var(--text);
+            font-size: 0.82rem;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .subtask-editor-row input:focus {
+            border-color: var(--primary);
+        }
+
+        .subtask-remove-btn {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            display: grid;
+            place-items: center;
+            border: 0;
+            border-radius: 12px;
+            background: var(--surface-2);
+            color: var(--danger);
+            cursor: pointer;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 26px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 22px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 18px rgba(109, 93, 252, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+
+        .btn-secondary {
+            background: var(--surface-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:active {
+            background: var(--border);
+        }
+
+        /* پیام خالی */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            color: var(--border);
+        }
+
+        /* اسکرول بار افقی */
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 8px 16px 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            flex-shrink: 0;
+        }
+
+        .filter-tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-tab {
+            padding: 8px 20px;
+            border-radius: 40px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 500;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .filter-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--text);
+            color: var(--bg);
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .daily-celebration {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .daily-celebration.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .daily-celebration-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.24);
+            backdrop-filter: blur(3px);
+        }
+
+        .daily-celebration-card {
+            position: relative;
+            width: min(100%, 340px);
+            padding: 30px 24px 26px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 28px;
+            background: var(--surface);
+            box-shadow: var(--shadow-lg);
+            color: var(--text);
+            text-align: center;
+            transform: translateY(18px) scale(0.92);
+            transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .daily-celebration.show .daily-celebration-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .celebration-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 16px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 2rem;
+            animation: celebration-bounce 0.7s 0.15s both;
+        }
+
+        .celebration-sparkle {
+            position: absolute;
+            color: var(--warning);
+            font-size: 1.25rem;
+            animation: celebration-sparkle 1.2s ease-in-out infinite alternate;
+        }
+
+        .celebration-sparkle:nth-child(1) {
+            top: 23px;
+            right: 26px;
+        }
+
+        .celebration-sparkle:nth-child(2) {
+            top: 64px;
+            left: 28px;
+            color: var(--success);
+            animation-delay: 0.25s;
+        }
+
+        .celebration-sparkle:nth-child(3) {
+            top: 112px;
+            right: 42px;
+            color: var(--primary);
+            animation-delay: 0.45s;
+        }
+
+        .celebration-sparkle:nth-child(4) {
+            top: 35px;
+            left: 58px;
+            color: var(--danger);
+            animation-delay: 0.6s;
+        }
+
+        .daily-celebration-message {
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.8;
+        }
+
+        .daily-celebration-day {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        @keyframes celebration-bounce {
+            0% { transform: scale(0.5) rotate(-15deg); }
+            65% { transform: scale(1.12) rotate(5deg); }
+            100% { transform: scale(1) rotate(0); }
+        }
+
+        @keyframes celebration-sparkle {
+            from { opacity: 0.45; transform: scale(0.7) rotate(-15deg); }
+            to { opacity: 1; transform: scale(1.15) rotate(15deg); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .daily-celebration,
+            .daily-celebration-card {
+                transition-duration: 0.01ms;
+            }
+
+            .celebration-icon,
+            .celebration-sparkle {
+                animation-duration: 0.01ms;
+                animation-iteration-count: 1;
+            }
+        }
+
+        /* دسکتاپ */
+        @media (min-width: 500px) {
+            .fab {
+                bottom: 90px;
+            }
+        }
+
+        /* ارتفاع کم */
+        @media (max-height: 700px) {
+            .fab {
+                bottom: 70px;
+            }
+            .app-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ===================== صفحه روزانه (Daily) ===================== */
+        .daily-page {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 16px 8px;
+            flex-direction: column;
+            gap: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .daily-page::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .daily-page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .daily-page::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .daily-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 6px 12px;
+        }
+
+        .daily-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .daily-header h2 i {
+            color: var(--primary);
+        }
+
+        .daily-progress {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-soft);
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+
+        .daily-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            padding-bottom: 20px;
+        }
+
+        .day-item {
+            aspect-ratio: 1 / 1;
+            border-radius: var(--radius-sm);
+            background: var(--surface-2);
+            border: 1.5px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        .day-item:active {
+            transform: scale(0.94);
+        }
+
+        .day-item:disabled {
+            cursor: not-allowed;
+            opacity: 0.55;
+        }
+
+        .day-item.next-day {
+            border-color: var(--primary);
+        }
+
+        .day-item .day-num {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .day-item .day-label {
+            font-size: 0.55rem;
+            color: var(--text-secondary);
+        }
+
+        .day-item.checked {
+            background: var(--success);
+            border-color: var(--success);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+        }
+
+        .day-item.checked .day-num,
+        .day-item.checked .day-label {
+            color: white;
+        }
+
+        .day-item.checked::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 4px;
+            right: 5px;
+            font-size: 0.6rem;
+            color: white;
+            opacity: 0.9;
+        }
+
+        .daily-reset-btn {
+            margin-top: 6px;
+            padding: 14px;
+            border-radius: 22px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .daily-reset-btn:active {
+            background: var(--border);
+            transform: scale(0.97);
+        }
+
+        .daily-reset-btn:hover {
+            color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        /* وقتی صفحه روزانه فعاله، لیست تسک‌ها مخفی بشه */
+        .app-container.show-daily .tasks-list,
+        .app-container.show-daily .filter-tabs {
+            display: none;
+        }
+
+        .app-container.show-daily .daily-page {
+            display: flex;
+        }
+
+        /* دکمه شناور در حالت روزانه مخفی */
+        .app-container.show-daily .fab {
+            display: none;
+        }
+
+        /* ===================== صفحه تنظیمات ===================== */
+        .settings-page {
+            display: none;
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 16px 16px 8px;
+            flex-direction: column;
+            gap: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .settings-page::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .settings-page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .settings-page::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .settings-section {
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .settings-section-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+        }
+
+        .settings-section-title i {
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        .settings-guide {
+            flex: 0 0 auto;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .settings-guide > summary {
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 16px;
+            color: var(--text);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .settings-guide > summary::-webkit-details-marker,
+        .guide-category > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .settings-guide > summary::marker,
+        .guide-category > summary::marker {
+            content: '';
+        }
+
+        .settings-guide-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: var(--primary-soft);
+            color: var(--primary);
+        }
+
+        .settings-guide-chevron {
+            margin-right: auto;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            transition: transform 0.2s ease;
+        }
+
+        .settings-guide[open] > summary .settings-guide-chevron {
+            transform: rotate(180deg);
+        }
+
+        .settings-guide-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 12px 14px;
+        }
+
+        .guide-intro {
+            margin: 0 4px 4px;
+            color: var(--text-secondary);
+            font-size: 0.76rem;
+            line-height: 1.8;
+        }
+
+        .guide-category {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            background: var(--surface);
+        }
+
+        .guide-category > summary {
+            min-height: 46px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 10px 12px;
+            color: var(--text);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .guide-category > summary > i:first-child {
+            width: 18px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .guide-category-chevron {
+            margin-right: auto;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            transition: transform 0.2s ease;
+        }
+
+        .guide-category[open] > summary .guide-category-chevron {
+            transform: rotate(180deg);
+        }
+
+        .guide-category ul {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin: 0;
+            padding: 0 40px 14px 14px;
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            line-height: 1.8;
+        }
+
+        .guide-category li {
+            padding-right: 2px;
+        }
+
+        .guide-category li::marker {
+            color: var(--primary);
+        }
+
+        /* رنگ‌های تم */
+        .color-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .color-swatch {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-swatch:active {
+            transform: scale(0.9);
+        }
+
+        .color-swatch.active {
+            border-color: var(--text);
+            transform: scale(1.05);
+        }
+
+        .color-swatch.active::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 0.9rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+        }
+
+        /* دکمه تغییر تم روشن/خاموش */
+        .theme-mode-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-family: inherit;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .theme-mode-btn:active {
+            transform: scale(0.97);
+        }
+
+        .theme-mode-btn .mode-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary-soft);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1rem;
+        }
+
+        /* فوتر تنظیمات */
+        .settings-footer {
+            text-align: center;
+            padding: 18px 0 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .settings-footer .brand-line {
+            font-size: 0.95rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .settings-footer .credit-line {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* وقتی صفحه تنظیمات فعاله، بقیه مخفی بشن */
+        .app-container.show-settings .tasks-list,
+        .app-container.show-settings .filter-tabs,
+        .app-container.show-settings .daily-page {
+            display: none;
+        }
+
+        .app-container.show-settings .settings-page {
+            display: flex;
+        }
+
+        .app-container.show-settings .fab {
+            display: none;
+        }
+
+        /* ===================== صفحه نمودار پیشرفت ===================== */
+        .progress-page {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 16px 20px;
+            flex-direction: column;
+            gap: 16px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+
+        .progress-page::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .progress-page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .progress-page::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .progress-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .progress-heading-icon {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 1.15rem;
+        }
+
+        .progress-heading h2 {
+            margin-bottom: 3px;
+            color: var(--text);
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .progress-heading p {
+            color: var(--text-secondary);
+            font-size: 0.78rem;
+            line-height: 1.7;
+        }
+
+        .period-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            padding: 5px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--surface-2);
+        }
+
+        .period-tab {
+            min-height: 40px;
+            padding: 8px 3px;
+            border-radius: 13px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+            font-family: inherit;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .period-tab.active {
+            background: var(--surface);
+            color: var(--primary);
+            border-color: var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .progress-overview {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .progress-stat-card {
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background: var(--surface);
+            box-shadow: var(--shadow);
+        }
+
+        .progress-stat-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 9px;
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .progress-stat-label i {
+            color: var(--primary);
+        }
+
+        .progress-stat-value {
+            color: var(--text);
+            font-size: 1.45rem;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .progress-stat-detail {
+            display: block;
+            margin-top: 5px;
+            color: var(--text-secondary);
+            font-size: 0.68rem;
+            line-height: 1.5;
+        }
+
+        .progress-chart-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 16px 12px 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .progress-chart-heading {
+            padding: 0 4px 10px;
+        }
+
+        .progress-chart-heading h3 {
+            margin-bottom: 3px;
+            color: var(--text);
+            font-size: 0.88rem;
+            font-weight: 700;
+        }
+
+        .progress-chart-heading p {
+            color: var(--text-secondary);
+            font-size: 0.7rem;
+        }
+
+        .progress-chart-card svg {
+            width: 100%;
+            height: auto;
+            display: block;
+            overflow: hidden;
+        }
+
+        .progress-chart-empty {
+            min-height: 190px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 20px;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .progress-chart-empty i {
+            color: var(--primary);
+            font-size: 1.6rem;
+        }
+
+        .progress-chart-empty strong {
+            color: var(--text);
+            font-size: 0.85rem;
+        }
+
+        .progress-chart-empty span {
+            font-size: 0.72rem;
+            line-height: 1.6;
+        }
+
+        .progress-summary {
+            background: var(--primary-soft);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 13px 15px;
+            font-size: 0.78rem;
+            color: var(--text);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.8;
+        }
+
+        .progress-summary i {
+            flex: 0 0 auto;
+            margin-top: 4px;
+            color: var(--primary);
+        }
+
+        .progress-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+            justify-content: flex-start;
+            padding: 0 4px;
+            font-size: 0.68rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-legend span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .progress-legend .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        @media (max-width: 360px) {
+            .progress-page {
+                padding-right: 12px;
+                padding-left: 12px;
+            }
+
+            .period-tabs {
+                gap: 3px;
+            }
+
+            .period-tab {
+                font-size: 0.64rem;
+            }
+
+            .progress-stat-card {
+                padding: 12px;
+            }
+        }
+
+        /* وقتی صفحه نمودار پیشرفت فعاله، بقیه مخفی بشن */
+        .app-container.show-progress .tasks-list,
+        .app-container.show-progress .filter-tabs,
+        .app-container.show-progress .daily-page,
+        .app-container.show-progress .settings-page {
+            display: none;
+        }
+
+        .app-container.show-progress .progress-page {
+            display: flex;
+        }
+
+        .app-container.show-progress .fab {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <!-- هدر -->
+        <div class="app-header">
+            <h1>نکسا</h1>
+            <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- آمار -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">کل</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="completedCount">0</div>
+                <div class="stat-label">انجام شده</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="pendingCount">0</div>
+                <div class="stat-label">در انتظار</div>
+            </div>
+        </div>
+
+        <!-- فیلترها -->
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" data-filter="all">همه</button>
+            <button class="filter-tab" data-filter="pending">در انتظار</button>
+            <button class="filter-tab" data-filter="completed">انجام شده</button>
+            <button class="filter-tab" data-filter="high">اولویت بالا</button>
+        </div>
+
+        <!-- لیست تسک‌ها -->
+        <div class="tasks-list" id="tasksList">
+            <!-- تسک‌ها به صورت داینامیک اضافه می‌شوند -->
+        </div>
+
+        <!-- صفحه روزانه (Daily) -->
+        <div class="daily-page" id="dailyPage">
+            <div class="daily-header">
+                <h2><i class="fas fa-calendar-check"></i> چالش ۳۰ روزه</h2>
+                <span class="daily-progress" id="dailyProgress">0 / 30</span>
+            </div>
+            <div class="daily-grid" id="dailyGrid">
+                <!-- 30 روز به صورت داینامیک ساخته میشه -->
+            </div>
+            <button class="daily-reset-btn" id="dailyResetBtn">
+                <i class="fas fa-rotate-right"></i>
+                ریست کردن چالش
+            </button>
+        </div>
+
+        <!-- صفحه تنظیمات (Settings) -->
+        <div class="settings-page" id="settingsPage">
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="fas fa-palette"></i>
+                    رنگ تم
+                </div>
+                <div class="color-options" id="colorOptions">
+                    <!-- رنگ‌ها به صورت داینامیک ساخته می‌شوند -->
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="fas fa-circle-half-stroke"></i>
+                    حالت نمایش
+                </div>
+                <button class="theme-mode-btn" id="settingsThemeToggle">
+                    <span>تم روشن / تاریک</span>
+                    <span class="mode-icon" id="settingsModeIcon">
+                        <i class="fas fa-moon"></i>
+                    </span>
+                </button>
+            </div>
+
+            <details class="settings-section settings-guide">
+                <summary>
+                    <span class="settings-guide-icon"><i class="fas fa-book-open"></i></span>
+                    <span>آموزش کار با برنامه</span>
+                    <i class="fas fa-chevron-down settings-guide-chevron" aria-hidden="true"></i>
+                </summary>
+                <div class="settings-guide-content">
+                    <p class="guide-intro">اینجا راهنمای ساده‌ی بخش‌های مختلف برنامه را می‌بینی. برای خواندن هر موضوع، روی عنوانش بزن.</p>
+
+                    <details class="guide-category">
+                        <summary>
+                            <i class="fas fa-list-check" aria-hidden="true"></i>
+                            <span>کارها و مدیریت آن‌ها</span>
+                            <i class="fas fa-chevron-down guide-category-chevron" aria-hidden="true"></i>
+                        </summary>
+                        <ul>
+                            <li>برای ساختن یک کار تازه، دکمه‌ی بنفشِ «+» را بزن. عنوان لازم است؛ توضیحات، اولویت و تاریخ سررسید اختیاری هستند.</li>
+                            <li>برای انجام یک کار، مربع کنار آن را تیک بزن. با برداشتن تیک، کار دوباره به فهرست کارهای در انتظار برمی‌گردد.</li>
+                            <li>با دکمه‌ی مداد می‌توانی عنوان و مشخصات کار را ویرایش کنی؛ با دکمه‌ی سطل زباله هم کار را حذف می‌کنی.</li>
+                            <li>فیلترهای بالای فهرست، کارها را بر اساس همه، در انتظار، انجام‌شده یا اولویت بالا نشان می‌دهند.</li>
+                        </ul>
+                    </details>
+
+                    <details class="guide-category">
+                        <summary>
+                            <i class="fas fa-list-ol" aria-hidden="true"></i>
+                            <span>زیرکارها و مرحله‌بندی</span>
+                            <i class="fas fa-chevron-down guide-category-chevron" aria-hidden="true"></i>
+                        </summary>
+                        <ul>
+                            <li>هنگام ساختن یا ویرایش یک کار، از قسمت «زیرکارها» مرحله‌های کوچک آن را یکی‌یکی اضافه کن؛ مثلاً برای زبان انگلیسی: خواندن مکالمه، مرور کلمات و نوشتن معنی‌ها.</li>
+                            <li>روی شمارنده‌ی کنار عنوان کار بزن تا مراحل باز شوند. برای انجام هر مرحله، ردیف همان مرحله را تیک بزن.</li>
+                            <li>وقتی همه‌ی زیرکارها تیک خورده باشند، خود کار هم انجام‌شده حساب می‌شود. با برداشتن تیک یک زیرکار، کار اصلی دوباره در انتظار می‌شود.</li>
+                            <li>نوار پیشرفت و عدد کنار مراحل نشان می‌دهند چند زیرکار انجام شده است. تیک کار اصلی همه‌ی زیرکارها را با هم تغییر می‌دهد.</li>
+                        </ul>
+                    </details>
+
+                    <details class="guide-category">
+                        <summary>
+                            <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                            <span>چالش ۳۰ روزه</span>
+                            <i class="fas fa-chevron-down guide-category-chevron" aria-hidden="true"></i>
+                        </summary>
+                        <ul>
+                            <li>هر روز، روز بعدی را تیک بزن تا یک مرحله جلو بروی؛ روزهای بعد تا رسیدن نوبتشان غیرفعال هستند.</li>
+                            <li>اگر اشتباهی تیک زدی، می‌توانی تیک آخرین روزِ انجام‌شده را برداری و دوباره ثبتش کنی.</li>
+                            <li>عدد بالای صفحه پیشرفتت را از ۳۰ روز نشان می‌دهد. دکمه‌ی «ریست کردن چالش» همه‌ی تیک‌ها را پاک می‌کند.</li>
+                        </ul>
+                    </details>
+
+                    <details class="guide-category">
+                        <summary>
+                            <i class="fas fa-chart-line" aria-hidden="true"></i>
+                            <span>آمار و نمودار پیشرفت</span>
+                            <i class="fas fa-chevron-down guide-category-chevron" aria-hidden="true"></i>
+                        </summary>
+                        <ul>
+                            <li>در نوار پایین روی «آمار» بزن تا درصد انجام کارها و نمودار پیشرفت را ببینی.</li>
+                            <li>با گزینه‌های روزانه، ۵ روزه، ۷ روزه یا ۳۰ روزه، بازه‌ی نمایش را عوض کن.</li>
+                            <li>کارت‌های بالای نمودار، آخرین درصد ثبت‌شده و تغییر آن نسبت به بازه‌ی قبلی را نشان می‌دهند. اطلاعات آمار با تغییر وضعیت کارها به‌روز می‌شود.</li>
+                        </ul>
+                    </details>
+
+                    <details class="guide-category">
+                        <summary>
+                            <i class="fas fa-palette" aria-hidden="true"></i>
+                            <span>تنظیمات و ظاهر برنامه</span>
+                            <i class="fas fa-chevron-down guide-category-chevron" aria-hidden="true"></i>
+                        </summary>
+                        <ul>
+                            <li>در بخش «رنگ تم»، یکی از رنگ‌ها را انتخاب کن تا رنگ اصلی برنامه عوض شود.</li>
+                            <li>دکمه‌ی «تم روشن / تاریک» ظاهر برنامه را بین حالت روشن و تاریک جابه‌جا می‌کند.</li>
+                            <li>نوار پایین برای جابه‌جایی بین کارها، چالش روزانه، آمار و تنظیمات است.</li>
+                        </ul>
+                    </details>
+                </div>
+            </details>
+
+            <div class="settings-footer">
+                <div class="brand-line">ساخته شده توسط rad</div>
+                <div class="credit-line">تمامی حقوق محفوظ است ©</div>
+            </div>
+        </div>
+
+        <!-- صفحه نمودار پیشرفت -->
+        <div class="progress-page" id="progressPage">
+            <div class="progress-heading">
+                <span class="progress-heading-icon" aria-hidden="true"><i class="fas fa-chart-line"></i></span>
+                <div>
+                    <h2>آمار پیشرفت</h2>
+                    <p>درصد انجام کارها را در بازه‌های زمانی مختلف مقایسه کن.</p>
+                </div>
+            </div>
+            <div class="period-tabs" id="progressPeriodTabs" role="group" aria-label="انتخاب بازه زمانی">
+                <button type="button" class="period-tab" data-period="1" aria-pressed="false">روزانه</button>
+                <button type="button" class="period-tab active" data-period="5" aria-pressed="true">۵ روزه</button>
+                <button type="button" class="period-tab" data-period="7" aria-pressed="false">۷ روزه</button>
+                <button type="button" class="period-tab" data-period="30" aria-pressed="false">۳۰ روزه</button>
+            </div>
+            <div class="progress-overview">
+                <div class="progress-stat-card">
+                    <span class="progress-stat-label"><i class="fas fa-bullseye"></i> آخرین درصد ثبت‌شده</span>
+                    <strong class="progress-stat-value" id="progressLatestRate">—</strong>
+                    <span class="progress-stat-detail" id="progressLatestLabel">هنوز داده‌ای ثبت نشده</span>
+                </div>
+                <div class="progress-stat-card">
+                    <span class="progress-stat-label"><i class="fas fa-arrow-trend-up"></i> تغییر با بازه قبل</span>
+                    <strong class="progress-stat-value" id="progressChangeValue">—</strong>
+                    <span class="progress-stat-detail" id="progressChangeLabel">برای مقایسه داده بیشتری ثبت کن</span>
+                </div>
+            </div>
+            <div class="progress-chart-card">
+                <div class="progress-chart-heading">
+                    <h3>روند انجام کارها</h3>
+                    <p id="progressChartDescription">هر نقطه، درصد کارهای انجام‌شده در یک بازه را نشان می‌دهد.</p>
+                </div>
+                <div id="progressChartSvg"></div>
+            </div>
+            <div class="progress-legend">
+                <span><i class="dot" style="background:var(--success)"></i> افزایش نسبت به بازه قبل</span>
+                <span><i class="dot" style="background:var(--danger)"></i> کاهش نسبت به بازه قبل</span>
+            </div>
+            <div class="progress-summary" id="progressSummary" aria-live="polite"></div>
+        </div>
+
+        <!-- دکمه شناور -->
+        <button class="fab" id="addTaskBtn" aria-label="افزودن کار جدید">
+            <i class="fas fa-plus"></i>
+        </button>
+
+        <!-- نوار پایین -->
+        <div class="bottom-nav">
+            <button class="nav-item active" id="navHome">
+                <i class="fas fa-list-check"></i>
+                <span>کارها</span>
+            </button>
+            <button class="nav-item" id="navDaily">
+                <i class="fas fa-calendar-day"></i>
+                <span>روزانه</span>
+            </button>
+            <button class="nav-item" id="navStats">
+                <i class="fas fa-chart-line"></i>
+                <span>آمار</span>
+            </button>
+            <button class="nav-item" id="navSettings">
+                <i class="fas fa-gear"></i>
+                <span>تنظیمات</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- مودال -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <h2 id="modalTitle"><i class="fas fa-pen"></i> کار جدید</h2>
+            <div class="input-group">
+                <label>عنوان کار</label>
+                <input type="text" id="taskTitleInput" placeholder="مثلاً: خرید نان" maxlength="100">
+            </div>
+            <div class="input-group">
+                <label>توضیحات (اختیاری)</label>
+                <textarea id="taskDescInput" placeholder="جزئیات بیشتر..." maxlength="300"></textarea>
+            </div>
+            <div class="input-group">
+                <label>اولویت</label>
+                <select id="taskPriorityInput">
+                    <option value="low">پایین</option>
+                    <option value="medium" selected>متوسط</option>
+                    <option value="high">بالا</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>تاریخ سررسید (اختیاری)</label>
+                <input type="text" id="taskDueInput" placeholder="مثلاً: 1403/05/20" maxlength="20">
+            </div>
+            <div class="subtask-editor">
+                <div class="subtask-editor-heading">
+                    <label for="subtaskInput">زیرکارها (اختیاری)</label>
+                </div>
+                <span class="subtask-editor-help">هر مرحله را اضافه کن؛ انجام کار اصلی با تکمیل همه‌ی زیرکارها ثبت می‌شود.</span>
+                <div class="subtask-add-row">
+                    <input type="text" id="subtaskInput" placeholder="مثلاً: خواندن مکالمه صفحه ۱۰" maxlength="120">
+                    <button type="button" class="subtask-add-btn" id="addSubtaskBtn">
+                        <i class="fas fa-plus"></i>
+                        افزودن
+                    </button>
+                </div>
+                <div class="subtask-editor-list" id="subtaskEditorList"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancelModalBtn">لغو</button>
+                <button class="btn btn-primary" id="saveTaskBtn">ذخیره</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <div class="daily-celebration" id="dailyCelebration" aria-live="polite" aria-atomic="true">
+        <div class="daily-celebration-backdrop"></div>
+        <div class="daily-celebration-card">
+            <span class="celebration-sparkle" aria-hidden="true">✦</span>
+            <span class="celebration-sparkle" aria-hidden="true">✧</span>
+            <span class="celebration-sparkle" aria-hidden="true">✦</span>
+            <span class="celebration-sparkle" aria-hidden="true">✧</span>
+            <div class="celebration-icon" aria-hidden="true">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <p class="daily-celebration-message">یک روز دیگه به هدفت نزدیک تر شدی!</p>
+            <span class="daily-celebration-day" id="dailyCelebrationDay"></span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ===================== داده‌ها =====================
+            let tasks = [];
+            let currentFilter = 'all';
+            let editingId = null;
+            let modalSubtasks = [];
+            const expandedTaskIds = new Set();
+
+            // ===================== ذخیره‌سازی =====================
+            const STORAGE_KEY = 'nexa_planner_tasks';
+            const THEME_KEY = 'nexa_planner_theme';
+            const DAILY_KEY = 'nexa_planner_daily';
+            const COLOR_KEY = 'nexa_planner_color';
+
+            // داده‌های روزانه (آرایه ۳۰ تایی از boolean)
+            let dailyData = new Array(30).fill(false);
+
+            // رنگ‌های تم (primary و primary-soft)
+            const THEME_COLORS = [
+                { id: 'purple', name: 'بنفش', primary: '#6d5dfc', soft: '#ede9fe', softDark: '#2a2440' },
+                { id: 'blue', name: 'آبی', primary: '#3b82f6', soft: '#dbeafe', softDark: '#1a2a4a' },
+                { id: 'green', name: 'سبز', primary: '#10b981', soft: '#d1fae5', softDark: '#0a2e22' },
+                { id: 'pink', name: 'صورتی', primary: '#ec4899', soft: '#fce7f3', softDark: '#3a1226' },
+                { id: 'orange', name: 'نارنجی', primary: '#f97316', soft: '#ffedd5', softDark: '#3a1f0a' },
+                { id: 'red', name: 'قرمز', primary: '#ef4444', soft: '#fee2e2', softDark: '#3a1010' },
+                { id: 'teal', name: 'فیروزه‌ای', primary: '#14b8a6', soft: '#ccfbf1', softDark: '#0a2e2a' },
+                
+            ];
+
+            let currentColorId = 'purple';
+
+            // ===================== داده‌های نمودار پیشرفت =====================
+            const PROGRESS_KEY = 'nexa_planner_progress';
+            const PROGRESS_PERIOD_KEY = 'nexa_planner_progress_period';
+            const VALID_PERIODS = [1, 5, 7, 30];
+            // تاریخچه روزانه: { 'YYYY-MM-DD': { completed, total } }
+            let progressHistory = {};
+            let progressPeriod = 5;
+
+            function loadTasks() {
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (stored) {
+                        tasks = JSON.parse(stored);
+                    } else {
+                        // داده‌های نمونه
+                        tasks = [
+                            { id: generateId(), title: 'رفتن به کلاس درس', desc: '', priority: 'high', due: '1403/06/10', completed: false, createdAt: Date.now() },
+                            { id: generateId(), title: 'خرید هدیه تولد', desc: '', priority: 'medium', due: '1403/06/05', completed: false, createdAt: Date.now() },
+                            { id: generateId(), title: 'تماس با پشتیبانی برای رفع مشکل', desc: '', priority: 'low', due: '', completed: true, createdAt: Date.now() }
+                        ];
+                    }
+                } catch (e) {
+                    tasks = [];
+                }
+                if (!Array.isArray(tasks)) tasks = [];
+                tasks = tasks.filter(task => task && typeof task === 'object').map(task => {
+                    task.subtasks = normalizeSubtasks(task.subtasks);
+                    return task;
+                });
+                saveTasks();
+            }
+
+            function normalizeSubtasks(subtasks) {
+                if (!Array.isArray(subtasks)) return [];
+                return subtasks
+                    .filter(subtask => subtask && typeof subtask === 'object' && typeof subtask.title === 'string')
+                    .map(subtask => ({
+                        id: subtask.id || generateId(),
+                        title: subtask.title.trim(),
+                        completed: subtask.completed === true
+                    }))
+                    .filter(subtask => subtask.title);
+            }
+
+            function saveTasks() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+                } catch (e) {}
+            }
+
+            // ===================== ذخیره‌سازی روزانه =====================
+            function loadDaily() {
+                try {
+                    const stored = localStorage.getItem(DAILY_KEY);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        if (Array.isArray(parsed) && parsed.length === 30) {
+                            dailyData = parsed.map(value => value === true);
+                        }
+                    }
+                } catch (e) {
+                    dailyData = new Array(30).fill(false);
+                }
+                if (!Array.isArray(dailyData) || dailyData.length !== 30) {
+                    dailyData = new Array(30).fill(false);
+                }
+                const firstIncompleteDay = dailyData.indexOf(false);
+                if (firstIncompleteDay !== -1) {
+                    dailyData.fill(false, firstIncompleteDay);
+                }
+                saveDaily();
+            }
+
+            function saveDaily() {
+                try {
+                    localStorage.setItem(DAILY_KEY, JSON.stringify(dailyData));
+                } catch (e) {}
+            }
+
+            // ===================== ذخیره‌سازی رنگ =====================
+            function loadColor() {
+                const saved = localStorage.getItem(COLOR_KEY);
+                if (saved && THEME_COLORS.find(c => c.id === saved)) {
+                    currentColorId = saved;
+                }
+                applyColor(currentColorId);
+            }
+
+            function saveColor(id) {
+                try {
+                    localStorage.setItem(COLOR_KEY, id);
+                } catch (e) {}
+            }
+
+            function applyColor(id) {
+                const color = THEME_COLORS.find(c => c.id === id);
+                if (!color) return;
+                currentColorId = id;
+                const root = document.documentElement;
+                // حالت روشن
+                root.style.setProperty('--primary', color.primary);
+                root.style.setProperty('--primary-soft', color.soft);
+                // برای حالت تاریک: از یک style جدید استفاده می‌کنیم
+                let darkStyle = document.getElementById('darkColorStyle');
+                if (!darkStyle) {
+                    darkStyle = document.createElement('style');
+                    darkStyle.id = 'darkColorStyle';
+                    document.head.appendChild(darkStyle);
+                }
+                darkStyle.textContent = `body.dark { --primary: ${color.primary}; --primary-soft: ${color.softDark}; }`;
+            }
+
+            function generateId() {
+                return Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            }
+
+            // ===================== ذخیره‌سازی نمودار پیشرفت =====================
+            function dateKeyFromDate(d) {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}-${m}-${day}`;
+            }
+
+            function todayKey() {
+                return dateKeyFromDate(new Date());
+            }
+
+            function formatShortDate(d) {
+                return `${d.getDate()}/${d.getMonth() + 1}`;
+            }
+
+            function loadProgress() {
+                try {
+                    const stored = localStorage.getItem(PROGRESS_KEY);
+                    if (stored) {
+                        const parsed = JSON.parse(stored);
+                        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+                            progressHistory = parsed;
+                        }
+                    }
+                } catch (e) {
+                    progressHistory = {};
+                }
+                if (!progressHistory || typeof progressHistory !== 'object' || Array.isArray(progressHistory)) {
+                    progressHistory = {};
+                }
+
+                const savedPeriod = parseInt(localStorage.getItem(PROGRESS_PERIOD_KEY), 10);
+                if (VALID_PERIODS.includes(savedPeriod)) {
+                    progressPeriod = savedPeriod;
+                }
+            }
+
+            function saveProgress() {
+                try {
+                    localStorage.setItem(PROGRESS_KEY, JSON.stringify(progressHistory));
+                } catch (e) {}
+            }
+
+            function saveProgressPeriod() {
+                try {
+                    localStorage.setItem(PROGRESS_PERIOD_KEY, String(progressPeriod));
+                } catch (e) {}
+            }
+
+            // هر بار که وضعیت کارها تغییر می‌کنه، وضعیت امروز ثبت می‌شه
+            function recordTodayProgress() {
+                const key = todayKey();
+                const total = tasks.length;
+                const completed = tasks.filter(t => t.completed).length;
+                progressHistory[key] = { completed, total };
+                saveProgress();
+            }
+
+            // گروه‌بندی روزها بر اساس دوره انتخابی (۱ / ۵ / ۷ / ۳۰ روزه)
+            function getProgressBuckets(periodDays, bucketCount) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const buckets = [];
+
+                for (let b = bucketCount - 1; b >= 0; b--) {
+                    let sumCompleted = 0;
+                    let sumTotal = 0;
+                    let daysWithData = 0;
+
+                    for (let d = 0; d < periodDays; d++) {
+                        const offsetDays = b * periodDays + d;
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - offsetDays);
+                        const entry = progressHistory[dateKeyFromDate(date)];
+                        if (entry) {
+                            sumCompleted += entry.completed || 0;
+                            sumTotal += entry.total || 0;
+                            daysWithData++;
+                        }
+                    }
+
+                    const recentDate = new Date(today);
+                    recentDate.setDate(recentDate.getDate() - b * periodDays);
+                    const rate = sumTotal > 0 ? Math.round((sumCompleted / sumTotal) * 100) : 0;
+
+                    buckets.push({
+                        label: formatShortDate(recentDate),
+                        rate,
+                        hasData: daysWithData > 0
+                    });
+                }
+                return buckets;
+            }
+
+            function buildProgressSVG(buckets) {
+                const W = 360, H = 220, padLeft = 34, padRight = 18, padTop = 24, padBottom = 42;
+                const chartW = W - padLeft - padRight;
+                const chartH = H - padTop - padBottom;
+                const n = buckets.length;
+                const stepX = n > 1 ? chartW / (n - 1) : 0;
+
+                const points = buckets.map((b, i) => {
+                    const x = padLeft + stepX * i;
+                    const safeRate = Math.max(0, Math.min(100, b.rate));
+                    const y = padTop + chartH - (safeRate / 100) * chartH;
+                    return Object.assign({ x, y }, b);
+                });
+
+                let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="نمودار روند درصد انجام کارها" xmlns="http://www.w3.org/2000/svg"><title>روند درصد انجام کارها در بازه‌های زمانی</title>`;
+
+                // خطوط راهنمای افقی
+                [0, 50, 100].forEach(v => {
+                    const y = padTop + chartH - (v / 100) * chartH;
+                    svg += `<line x1="${padLeft}" y1="${y}" x2="${W - padRight}" y2="${y}" style="stroke:var(--border)" stroke-width="1" stroke-dasharray="3,4" />`;
+                    svg += `<text x="${padLeft - 7}" y="${y + 3}" font-size="9" style="fill:var(--text-secondary)" text-anchor="end">${v}%</text>`;
+                });
+
+                // Missing periods remain disconnected so they are not mistaken for zero progress.
+                for (let i = 1; i < points.length; i++) {
+                    const prev = points[i - 1];
+                    const cur = points[i];
+                    if (!prev.hasData || !cur.hasData) continue;
+                    const color = cur.rate >= prev.rate ? 'var(--success)' : 'var(--danger)';
+                    svg += `<line x1="${prev.x}" y1="${prev.y}" x2="${cur.x}" y2="${cur.y}" style="stroke:${color}" stroke-width="3.5" stroke-linecap="round" />`;
+                }
+
+                points.forEach((p, i) => {
+                    if (p.hasData) {
+                        const color = i === 0 || !points[i - 1].hasData
+                            ? 'var(--primary)'
+                            : (p.rate >= points[i - 1].rate ? 'var(--success)' : 'var(--danger)');
+                        const labelY = p.y < padTop + 18 ? p.y + 19 : p.y - 11;
+                        svg += `<circle cx="${p.x}" cy="${p.y}" r="6" style="fill:${color}" stroke="var(--surface)" stroke-width="3" />`;
+                        svg += `<text x="${p.x}" y="${labelY}" font-size="10" font-weight="700" style="fill:var(--text)" text-anchor="middle">${p.rate}%</text>`;
+                    }
+                    svg += `<text x="${p.x}" y="${H - 13}" font-size="9" style="fill:var(--text-secondary)" text-anchor="middle">${p.label}</text>`;
+                });
+
+                svg += `</svg>`;
+                return svg;
+            }
+
+            function renderProgressChart() {
+                document.querySelectorAll('.period-tab').forEach(t => {
+                    const isActive = parseInt(t.dataset.period, 10) === progressPeriod;
+                    t.classList.toggle('active', isActive);
+                    t.setAttribute('aria-pressed', String(isActive));
+                });
+
+                const periodLabels = { 1: 'روزانه', 5: '۵ روزه', 7: '۷ روزه', 30: '۳۰ روزه' };
+                const periodLabel = periodLabels[progressPeriod] || 'انتخاب‌شده';
+                document.getElementById('progressChartDescription').textContent =
+                    `هر نقطه، درصد کارهای انجام‌شده در یک بازه ${periodLabel} را نشان می‌دهد.`;
+
+                const buckets = getProgressBuckets(progressPeriod, 6);
+                const svgWrap = document.getElementById('progressChartSvg');
+                const recordedBuckets = buckets.filter(bucket => bucket.hasData);
+                if (svgWrap) {
+                    svgWrap.innerHTML = recordedBuckets.length
+                        ? buildProgressSVG(buckets)
+                        : `<div class="progress-chart-empty"><i class="fas fa-chart-line" aria-hidden="true"></i><strong>هنوز آماری برای نمایش نداریم</strong><span>با ثبت و انجام کارها، نمودار پیشرفتت اینجا شکل می‌گیرد.</span></div>`;
+                }
+
+                const summaryEl = document.getElementById('progressSummary');
+                if (!summaryEl) return;
+
+                const latestRateEl = document.getElementById('progressLatestRate');
+                const latestLabelEl = document.getElementById('progressLatestLabel');
+                const changeValueEl = document.getElementById('progressChangeValue');
+                const changeLabelEl = document.getElementById('progressChangeLabel');
+                changeValueEl.style.color = 'var(--text)';
+                if (recordedBuckets.length === 0) {
+                    latestRateEl.textContent = '—';
+                    latestLabelEl.textContent = 'هنوز داده‌ای ثبت نشده';
+                    changeValueEl.textContent = '—';
+                    changeLabelEl.textContent = 'برای مقایسه داده بیشتری ثبت کن';
+                    summaryEl.innerHTML = `<i class="fas fa-circle-info"></i><span>این نمودار با تغییر وضعیت کارها به‌روز می‌شود؛ برای شروع، یک کار را انجام‌شده علامت بزن.</span>`;
+                    return;
+                }
+
+                const latest = recordedBuckets[recordedBuckets.length - 1];
+                const previous = recordedBuckets.length > 1 ? recordedBuckets[recordedBuckets.length - 2] : null;
+                latestRateEl.textContent = `${latest.rate}%`;
+                latestLabelEl.textContent = `بازه ${periodLabel}، ${latest.label}`;
+                if (previous) {
+                    const diff = latest.rate - previous.rate;
+                    changeValueEl.textContent = `${diff > 0 ? '+' : ''}${diff}%`;
+                    if (diff > 0) {
+                        changeValueEl.style.color = 'var(--success)';
+                        changeLabelEl.textContent = 'پیشرفت نسبت به بازه قبل';
+                        summaryEl.innerHTML = `<i class="fas fa-arrow-trend-up" style="color:var(--success)"></i><span>آفرین! درصد انجام کارها نسبت به بازه قبل <b>${diff}%</b> بیشتر شده است.</span>`;
+                    } else if (diff < 0) {
+                        changeValueEl.style.color = 'var(--danger)';
+                        changeLabelEl.textContent = 'کاهش نسبت به بازه قبل';
+                        summaryEl.innerHTML = `<i class="fas fa-arrow-trend-down" style="color:var(--danger)"></i><span>درصد انجام کارها نسبت به بازه قبل <b>${Math.abs(diff)}%</b> کمتر شده است؛ با یک قدم کوچک دوباره ادامه بده.</span>`;
+                    } else {
+                        changeValueEl.style.color = 'var(--text-secondary)';
+                        changeLabelEl.textContent = 'بدون تغییر نسبت به بازه قبل';
+                        summaryEl.innerHTML = `<i class="fas fa-minus"></i><span>درصد انجام کارها نسبت به بازه قبل تغییری نکرده است. همین روند را ادامه بده!</span>`;
+                    }
+                } else {
+                    changeValueEl.textContent = '—';
+                    changeValueEl.style.color = 'var(--text)';
+                    changeLabelEl.textContent = 'برای مقایسه، یک بازه دیگر هم ثبت کن';
+                    summaryEl.innerHTML = `<i class="fas fa-circle-info"></i><span>در آخرین بازه ثبت‌شده، <b>${latest.rate}%</b> از کارها انجام شده است. با ثبت بازه‌ی بعدی می‌توانی روند تغییر را هم ببینی.</span>`;
+                }
+            }
+
+            // ===================== تم =====================
+            function loadTheme() {
+                const saved = localStorage.getItem(THEME_KEY);
+                if (saved === 'dark') {
+                    document.body.classList.add('dark');
+                } else if (saved === 'light') {
+                    document.body.classList.remove('dark');
+                } else {
+                    // پیش‌فرض بر اساس سیستم
+                    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                        document.body.classList.add('dark');
+                    }
+                }
+                updateThemeIcon();
+            }
+
+            function toggleTheme() {
+                document.body.classList.toggle('dark');
+                const isDark = document.body.classList.contains('dark');
+                localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+                updateThemeIcon();
+            }
+
+            function updateThemeIcon() {
+                const icon = document.querySelector('#themeToggle i');
+                if (document.body.classList.contains('dark')) {
+                    icon.className = 'fas fa-sun';
+                } else {
+                    icon.className = 'fas fa-moon';
+                }
+                // آیکون تنظیمات
+                const settingsIcon = document.getElementById('settingsModeIcon');
+                if (settingsIcon) {
+                    const i = settingsIcon.querySelector('i');
+                    if (i) {
+                        i.className = document.body.classList.contains('dark') ? 'fas fa-sun' : 'fas fa-moon';
+                    }
+                }
+            }
+
+            // ===================== رندر =====================
+            function renderTasks() {
+                const container = document.getElementById('tasksList');
+                const filtered = getFilteredTasks();
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-clipboard-list"></i>
+                            <p>هیچ کاری پیدا نشد</p>
+                            <p style="font-size:0.8rem; opacity:0.7">با دکمه + یک کار جدید اضافه کن</p>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = filtered.map(task => taskCardHTML(task)).join('');
+                }
+
+                // به‌روزرسانی آمار
+                const total = tasks.length;
+                const completed = tasks.filter(t => t.completed).length;
+                const pending = total - completed;
+                document.getElementById('totalCount').textContent = total;
+                document.getElementById('completedCount').textContent = completed;
+                document.getElementById('pendingCount').textContent = pending;
+
+                recordTodayProgress();
+            }
+
+            function getFilteredTasks() {
+                let filtered = [...tasks];
+                switch (currentFilter) {
+                    case 'pending':
+                        filtered = filtered.filter(t => !t.completed);
+                        break;
+                    case 'completed':
+                        filtered = filtered.filter(t => t.completed);
+                        break;
+                    case 'high':
+                        filtered = filtered.filter(t => t.priority === 'high' && !t.completed);
+                        break;
+                    default:
+                        break;
+                }
+                // مرتب‌سازی: انجام نشده‌ها اول، سپس اولویت بالا
+                const priorityOrder = { high: 1, medium: 2, low: 3 };
+                filtered.sort((a, b) => {
+                    if (a.completed !== b.completed) return a.completed ? 1 : -1;
+                    return (priorityOrder[a.priority] || 2) - (priorityOrder[b.priority] || 2);
+                });
+                return filtered;
+            }
+
+            function taskCardHTML(task) {
+                const priorityLabels = { high: 'بالا', medium: 'متوسط', low: 'پایین' };
+                const priorityClass = task.priority || 'medium';
+                const completedClass = task.completed ? 'completed' : '';
+                const checkIcon = task.completed ? '<i class="fas fa-check"></i>' : '';
+                const subtasks = normalizeSubtasks(task.subtasks);
+                const taskId = escapeHtml(String(task.id));
+                const completedSubtasks = subtasks.filter(subtask => subtask.completed).length;
+                const hasSubtasks = subtasks.length > 0;
+                const subtaskProgress = hasSubtasks ? Math.round((completedSubtasks / subtasks.length) * 100) : 0;
+                const isExpanded = expandedTaskIds.has(String(task.id));
+                const subtaskToggle = hasSubtasks ? `
+                    <button type="button" class="subtask-toggle" data-action="toggle-subtasks" data-id="${taskId}" aria-expanded="${isExpanded}" aria-label="${isExpanded ? 'بستن' : 'نمایش'} زیرکارها">
+                        <span>${completedSubtasks} از ${subtasks.length}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                ` : '';
+                const subtaskList = hasSubtasks && isExpanded ? `
+                    <div class="subtask-list" aria-label="فهرست زیرکارهای ${escapeHtml(task.title)}">
+                        <div class="subtask-list-heading">
+                            <span>مراحل کار</span>
+                            <span class="subtask-progress">
+                                <span>${subtaskProgress}٪</span>
+                                <span class="subtask-progress-track" role="progressbar" aria-label="پیشرفت زیرکارها" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${subtaskProgress}">
+                                    <span class="subtask-progress-fill" style="width:${subtaskProgress}%"></span>
+                                </span>
+                            </span>
+                        </div>
+                        ${subtasks.map(subtask => `
+                            <button type="button" class="subtask-item ${subtask.completed ? 'completed' : ''}" data-action="toggle-subtask" data-id="${taskId}" data-subtask-id="${escapeHtml(String(subtask.id))}" aria-pressed="${subtask.completed}" aria-label="${subtask.completed ? 'لغو انجام' : 'انجام'}: ${escapeHtml(subtask.title)}">
+                                <span class="subtask-check">${subtask.completed ? '<i class="fas fa-check"></i>' : ''}</span>
+                                <span class="subtask-title">${escapeHtml(subtask.title)}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="task-card ${completedClass}" data-id="${taskId}">
+                        <button type="button" class="task-check" data-action="toggle" data-id="${taskId}" aria-label="${task.completed ? 'لغو انجام کار' : 'انجام کار'}">
+                            ${checkIcon}
+                        </button>
+                        <div class="task-content">
+                            <div class="task-title-row">
+                                <div class="task-title">${escapeHtml(task.title)}</div>
+                                ${subtaskToggle}
+                            </div>
+                            <div class="task-meta">
+                                <span class="task-priority ${priorityClass}">${priorityLabels[priorityClass] || 'متوسط'}</span>
+                                ${task.due ? `<span><i class="fas fa-calendar-alt"></i> ${escapeHtml(task.due)}</span>` : ''}
+                                ${task.desc ? `<span><i class="fas fa-align-right"></i> ${escapeHtml(task.desc.substring(0, 25))}${task.desc.length > 25 ? '...' : ''}</span>` : ''}
+                            </div>
+                            ${subtaskList}
+                        </div>
+                        <div class="task-actions">
+                            <button type="button" class="icon-btn" data-action="edit" data-id="${taskId}" aria-label="ویرایش">
+                                <i class="fas fa-pen"></i>
+                            </button>
+                            <button type="button" class="icon-btn delete" data-action="delete" data-id="${taskId}" aria-label="حذف">
+                                <i class="fas fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
+            // ===================== رندر روزانه =====================
+            function renderDaily() {
+                const grid = document.getElementById('dailyGrid');
+                const checkedCount = dailyData.findIndex(v => !v);
+                const completedDays = checkedCount === -1 ? 30 : checkedCount;
+                document.getElementById('dailyProgress').textContent = `${completedDays} / 30`;
+
+                let html = '';
+                for (let i = 0; i < 30; i++) {
+                    const isChecked = i < completedDays;
+                    const isNextDay = i === completedDays;
+                    const isLastCompletedDay = completedDays > 0 && i === completedDays - 1;
+                    const isDisabled = !isNextDay && !isLastCompletedDay;
+                    html += `
+                        <button type="button" class="day-item ${isChecked ? 'checked' : ''} ${isNextDay ? 'next-day' : ''}" data-day="${i}" ${isDisabled ? 'disabled' : ''} aria-label="روز ${i + 1}${isDisabled ? '، غیرفعال' : ''}">
+                            <span class="day-num">${i + 1}</span>
+                            <span class="day-label">روز</span>
+                        </button>
+                    `;
+                }
+                grid.innerHTML = html;
+            }
+
+            // ===================== رندر رنگ‌ها در تنظیمات =====================
+            function renderColorOptions() {
+                const container = document.getElementById('colorOptions');
+                container.innerHTML = THEME_COLORS.map(color => {
+                    const active = color.id === currentColorId ? 'active' : '';
+                    return `<div class="color-swatch ${active}" data-color="${color.id}" 
+                                style="background: ${color.primary};" 
+                                title="${color.name}"></div>`;
+                }).join('');
+            }
+
+            // ===================== عملیات =====================
+            function toggleTask(id) {
+                const task = tasks.find(t => t.id === id);
+                if (task) {
+                    const nextCompleted = !task.completed;
+                    const subtasks = normalizeSubtasks(task.subtasks);
+                    if (subtasks.length) {
+                        task.subtasks = subtasks.map(subtask => Object.assign({}, subtask, { completed: nextCompleted }));
+                    }
+                    task.completed = nextCompleted;
+                    saveTasks();
+                    renderTasks();
+                    showToast(task.completed ? 'انجام شد!' : 'به در انتظار برگشت');
+                }
+            }
+
+            function toggleSubtask(taskId, subtaskId) {
+                const task = tasks.find(item => String(item.id) === String(taskId));
+                if (!task) return;
+                const subtasks = normalizeSubtasks(task.subtasks);
+                const subtask = subtasks.find(item => String(item.id) === String(subtaskId));
+                if (!subtask) return;
+
+                subtask.completed = !subtask.completed;
+                task.subtasks = subtasks;
+                task.completed = subtasks.length > 0 && subtasks.every(item => item.completed);
+                saveTasks();
+                renderTasks();
+                showToast(task.completed ? 'همه زیرکارها انجام شد!' : subtask.completed ? 'زیرکار انجام شد' : 'علامت زیرکار لغو شد');
+            }
+
+            function toggleSubtasks(taskId) {
+                const id = String(taskId);
+                if (expandedTaskIds.has(id)) {
+                    expandedTaskIds.delete(id);
+                } else {
+                    expandedTaskIds.add(id);
+                }
+                renderTasks();
+            }
+
+            function deleteTask(id) {
+                if (confirm('این کار حذف شود؟')) {
+                    tasks = tasks.filter(t => t.id !== id);
+                    expandedTaskIds.delete(String(id));
+                    saveTasks();
+                    renderTasks();
+                    showToast('کار حذف شد');
+                }
+            }
+
+            function toggleDay(index) {
+                if (index < 0 || index > 29) return;
+                const firstIncompleteDay = dailyData.findIndex(isComplete => !isComplete);
+                const completedDays = firstIncompleteDay === -1 ? 30 : firstIncompleteDay;
+
+                if (index === completedDays && completedDays < 30) {
+                    dailyData[index] = true;
+                } else if (index === completedDays - 1) {
+                    dailyData[index] = false;
+                } else {
+                    return;
+                }
+
+                saveDaily();
+                renderDaily();
+                if (dailyData[index]) {
+                    showDailyCelebration(index + 1);
+                } else {
+                    showToast(`علامت روز ${index + 1} لغو شد`);
+                }
+            }
+
+            function resetDaily() {
+                if (confirm('همه تیک‌های چالش ۳۰ روزه پاک شوند؟')) {
+                    dailyData = new Array(30).fill(false);
+                    saveDaily();
+                    renderDaily();
+                    showToast('چالش ریست شد');
+                }
+            }
+
+            function openEditModal(id) {
+                const task = tasks.find(t => t.id === id);
+                if (!task) return;
+                editingId = id;
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-pen"></i> ویرایش کار';
+                document.getElementById('taskTitleInput').value = task.title || '';
+                document.getElementById('taskDescInput').value = task.desc || '';
+                document.getElementById('taskPriorityInput').value = task.priority || 'medium';
+                document.getElementById('taskDueInput').value = task.due || '';
+                document.getElementById('subtaskInput').value = '';
+                modalSubtasks = normalizeSubtasks(task.subtasks).map(subtask => Object.assign({}, subtask));
+                renderSubtaskEditor();
+                document.getElementById('modalOverlay').classList.add('show');
+                document.getElementById('taskTitleInput').focus();
+            }
+
+            function openAddModal() {
+                editingId = null;
+                document.getElementById('modalTitle').innerHTML = '<i class="fas fa-plus-circle"></i> کار جدید';
+                document.getElementById('taskTitleInput').value = '';
+                document.getElementById('taskDescInput').value = '';
+                document.getElementById('taskPriorityInput').value = 'medium';
+                document.getElementById('taskDueInput').value = '';
+                document.getElementById('subtaskInput').value = '';
+                modalSubtasks = [];
+                renderSubtaskEditor();
+                document.getElementById('modalOverlay').classList.add('show');
+                document.getElementById('taskTitleInput').focus();
+            }
+
+            function closeModal() {
+                document.getElementById('modalOverlay').classList.remove('show');
+                editingId = null;
+                modalSubtasks = [];
+                renderSubtaskEditor();
+            }
+
+            function renderSubtaskEditor() {
+                const list = document.getElementById('subtaskEditorList');
+                if (!list) return;
+                list.innerHTML = modalSubtasks.map((subtask, index) => `
+                    <div class="subtask-editor-row" data-index="${index}">
+                        <input type="text" value="${escapeHtml(subtask.title)}" maxlength="120" aria-label="عنوان زیرکار ${index + 1}">
+                        <button type="button" class="subtask-remove-btn" data-action="remove-subtask" data-index="${index}" aria-label="حذف زیرکار ${index + 1}">
+                            <i class="fas fa-trash-can"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            function addSubtaskFromInput() {
+                const input = document.getElementById('subtaskInput');
+                const title = input.value.trim();
+                if (!title) {
+                    showToast('عنوان زیرکار را وارد کن');
+                    input.focus();
+                    return;
+                }
+                modalSubtasks.push({ id: generateId(), title, completed: false });
+                input.value = '';
+                renderSubtaskEditor();
+                input.focus();
+            }
+
+            function saveTaskFromModal() {
+                const title = document.getElementById('taskTitleInput').value.trim();
+                if (!title) {
+                    showToast('عنوان کار را وارد کن');
+                    return;
+                }
+                const desc = document.getElementById('taskDescInput').value.trim();
+                const priority = document.getElementById('taskPriorityInput').value;
+                const due = document.getElementById('taskDueInput').value.trim();
+                const subtasks = modalSubtasks
+                    .map(subtask => Object.assign({}, subtask, { title: subtask.title.trim() }))
+                    .filter(subtask => subtask.title);
+
+                if (editingId) {
+                    const task = tasks.find(t => t.id === editingId);
+                    if (task) {
+                        task.title = title;
+                        task.desc = desc;
+                        task.priority = priority;
+                        task.due = due;
+                        task.subtasks = subtasks;
+                        if (subtasks.length) {
+                            task.completed = subtasks.every(subtask => subtask.completed);
+                        }
+                    }
+                    showToast('ویرایش شد');
+                } else {
+                    tasks.push({
+                        id: generateId(),
+                        title,
+                        desc,
+                        priority,
+                        due,
+                        subtasks,
+                        completed: false,
+                        createdAt: Date.now()
+                    });
+                    showToast('کار جدید اضافه شد');
+                }
+                saveTasks();
+                renderTasks();
+                closeModal();
+            }
+
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                clearTimeout(toast._timeout);
+                toast._timeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
+
+            function showDailyCelebration(dayNumber) {
+                const celebration = document.getElementById('dailyCelebration');
+                document.getElementById('dailyCelebrationDay').textContent = `روز ${dayNumber} از ۳۰`;
+                celebration.classList.remove('show');
+                void celebration.offsetWidth;
+                celebration.classList.add('show');
+                clearTimeout(celebration._timeout);
+                celebration._timeout = setTimeout(() => {
+                    celebration.classList.remove('show');
+                }, 2400);
+            }
+
+            // ===================== رویدادها =====================
+            function bindEvents() {
+                // تغییر تم
+                document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+                // دکمه افزودن
+                document.getElementById('addTaskBtn').addEventListener('click', openAddModal);
+
+                // بستن مودال
+                document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+                document.getElementById('modalOverlay').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) closeModal();
+                });
+
+                // ذخیره
+                document.getElementById('saveTaskBtn').addEventListener('click', saveTaskFromModal);
+
+                // Enter در مودال
+                document.getElementById('taskTitleInput').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        saveTaskFromModal();
+                    }
+                });
+
+                document.getElementById('addSubtaskBtn').addEventListener('click', addSubtaskFromInput);
+                document.getElementById('subtaskInput').addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addSubtaskFromInput();
+                    }
+                });
+                document.getElementById('subtaskEditorList').addEventListener('input', (e) => {
+                    const input = e.target.closest('.subtask-editor-row input');
+                    if (!input) return;
+                    const index = Number(input.closest('.subtask-editor-row').dataset.index);
+                    if (modalSubtasks[index]) modalSubtasks[index].title = input.value;
+                });
+                document.getElementById('subtaskEditorList').addEventListener('click', (e) => {
+                    const removeButton = e.target.closest('[data-action="remove-subtask"]');
+                    if (!removeButton) return;
+                    modalSubtasks.splice(Number(removeButton.dataset.index), 1);
+                    renderSubtaskEditor();
+                });
+
+                // رویدادهای لیست (delegation)
+                document.getElementById('tasksList').addEventListener('click', (e) => {
+                    const target = e.target.closest('[data-action]');
+                    if (!target) return;
+                    const action = target.dataset.action;
+                    const id = target.dataset.id;
+                    if (action === 'toggle') toggleTask(id);
+                    else if (action === 'toggle-subtask') toggleSubtask(id, target.dataset.subtaskId);
+                    else if (action === 'toggle-subtasks') toggleSubtasks(id);
+                    else if (action === 'edit') openEditModal(id);
+                    else if (action === 'delete') deleteTask(id);
+                });
+
+                // فیلترها
+                document.getElementById('filterTabs').addEventListener('click', (e) => {
+                    const tab = e.target.closest('.filter-tab');
+                    if (!tab) return;
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.dataset.filter;
+                    renderTasks();
+                });
+
+                // رویداد کلیک روی روزها (delegation)
+                document.getElementById('dailyGrid').addEventListener('click', (e) => {
+                    const dayItem = e.target.closest('.day-item');
+                    if (!dayItem) return;
+                    const dayIndex = parseInt(dayItem.dataset.day, 10);
+                    if (!isNaN(dayIndex)) toggleDay(dayIndex);
+                });
+
+                // دکمه ریست روزانه
+                document.getElementById('dailyResetBtn').addEventListener('click', resetDaily);
+
+                // رویدادهای رنگ در تنظیمات
+                document.getElementById('colorOptions').addEventListener('click', (e) => {
+                    const swatch = e.target.closest('.color-swatch');
+                    if (!swatch) return;
+                    const colorId = swatch.dataset.color;
+                    if (colorId) {
+                        applyColor(colorId);
+                        saveColor(colorId);
+                        renderColorOptions();
+                        showToast('رنگ تم تغییر کرد');
+                    }
+                });
+
+                // دکمه تغییر تم در تنظیمات
+                document.getElementById('settingsThemeToggle').addEventListener('click', () => {
+                    toggleTheme();
+                });
+
+                // نوار پایین
+                document.getElementById('navHome').addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.getElementById('navHome').classList.add('active');
+                    document.getElementById('app').classList.remove('show-daily', 'show-settings', 'show-progress');
+                    currentFilter = 'all';
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelector('.filter-tab[data-filter="all"]').classList.add('active');
+                    renderTasks();
+                });
+
+                document.getElementById('navDaily').addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.getElementById('navDaily').classList.add('active');
+                    document.getElementById('app').classList.add('show-daily');
+                    document.getElementById('app').classList.remove('show-settings', 'show-progress');
+                    renderDaily();
+                });
+
+                document.getElementById('navStats').addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.getElementById('navStats').classList.add('active');
+                    document.getElementById('app').classList.add('show-progress');
+                    document.getElementById('app').classList.remove('show-daily', 'show-settings');
+                    renderProgressChart();
+                });
+
+                document.getElementById('navSettings').addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                    document.getElementById('navSettings').classList.add('active');
+                    document.getElementById('app').classList.add('show-settings');
+                    document.getElementById('app').classList.remove('show-daily', 'show-progress');
+                    renderColorOptions();
+                });
+
+                // دکمه‌های تعویض بازه زمانی نمودار پیشرفت
+                document.getElementById('progressPeriodTabs').addEventListener('click', (e) => {
+                    const tab = e.target.closest('.period-tab');
+                    if (!tab) return;
+                    const period = parseInt(tab.dataset.period, 10);
+                    if (!VALID_PERIODS.includes(period)) return;
+                    progressPeriod = period;
+                    saveProgressPeriod();
+                    renderProgressChart();
+                });
+            }
+
+            // ===================== راه‌اندازی =====================
+            function init() {
+                loadTheme();
+                loadColor();
+                loadProgress();
+                loadTasks();
+                loadDaily();
+                renderTasks();
+                renderDaily();
+                renderColorOptions();
+                bindEvents();
+            }
+
+            document.addEventListener('DOMContentLoaded', init);
+        })();
+    </script>
+</body>
+</html>
